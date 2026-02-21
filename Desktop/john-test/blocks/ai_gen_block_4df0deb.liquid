@@ -1,0 +1,153 @@
+{% doc %}
+  @prompt
+    Please create an announcement bar that can customize background, height, font size and font color
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    text-align: center;
+  }
+
+  .ai-announcement-bar__content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: {{ block.settings.bar_height }}px;
+    padding: 0 20px;
+  }
+
+  .ai-announcement-bar__text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.font_size }}px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ai-announcement-bar__link-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-announcement-bar__link-{{ ai_gen_id }}:hover {
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar__content-{{ ai_gen_id }} {
+      height: {{ block.settings.bar_height | times: 0.8 }}px;
+    }
+
+    .ai-announcement-bar__text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }} class="ai-announcement-bar-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.link != blank %}
+    <a href="{{ block.settings.link }}" class="ai-announcement-bar__link-{{ ai_gen_id }}">
+      <div class="ai-announcement-bar__content-{{ ai_gen_id }}">
+        {% if block.settings.announcement_text != blank %}
+          <p class="ai-announcement-bar__text-{{ ai_gen_id }}">{{ block.settings.announcement_text }}</p>
+        {% else %}
+          <p class="ai-announcement-bar__text-{{ ai_gen_id }}">Add your announcement text</p>
+        {% endif %}
+      </div>
+    </a>
+  {% else %}
+    <div class="ai-announcement-bar__content-{{ ai_gen_id }}">
+      {% if block.settings.announcement_text != blank %}
+        <p class="ai-announcement-bar__text-{{ ai_gen_id }}">{{ block.settings.announcement_text }}</p>
+      {% else %}
+        <p class="ai-announcement-bar__text-{{ ai_gen_id }}">Add your announcement text</p>
+      {% endif %}
+    </div>
+  {% endif %}
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "label": "Height",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}
